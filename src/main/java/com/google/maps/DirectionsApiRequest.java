@@ -359,6 +359,24 @@ public class DirectionsApiRequest
     /** Whether this waypoint is a stopover waypoint. */
     private boolean isStopover;
 
+    public String getLocation() {
+      return location;
+    }
+
+    public void setLocation(String location) {
+      this.location = location;
+    }
+
+    public boolean isStopover() {
+      return isStopover;
+    }
+
+    public void setStopover(boolean isStopover) {
+      this.isStopover = isStopover;
+    }
+
+    public Waypoint() {}
+
     /**
      * Constructs a stopover Waypoint using a String address.
      *

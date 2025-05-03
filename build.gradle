@@ -15,15 +15,19 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.51.0'
     id 'com.github.sherter.google-java-format' version '0.9'
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
+    //Override to deploy on GOOGLE ARTIFACT REGISTRY - DEVOTEAM youmaps-api PROJECT
+    id "maven-publish"
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.5"
 }
 
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
-apply plugin: 'signing'
+//apply plugin: 'signing' 
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.github.sherter.google-java-format'
+apply plugin: 'com.google.cloud.artifactregistry.gradle-plugin'
 
 group = 'com.google.maps'
 sourceCompatibility = 1.8
@@ -31,6 +35,10 @@ version = '2.2.0'
 
 repositories {
     mavenCentral()
+    // Override to deploy on GOOGLE ARTIFACT REGISTRY - DEVOTEAM youmaps-api PROJECT
+    maven {
+        url "artifactregistry://europe-west2-maven.pkg.dev/youmaps-api/maven-devoteam"
+    }
 }
 
 googleJavaFormat {
@@ -54,15 +62,15 @@ artifacts {
 }
 
 dependencies {
-    compileOnly 'com.google.appengine:appengine-api-1.0-sdk:2.0.31'
+    compileOnly 'com.google.appengine:appengine-api-1.0-sdk:2.0.35'
     api 'com.squareup.okhttp3:okhttp:4.11.0'
-    api 'com.google.code.gson:gson:2.11.0'
+    api 'com.google.code.gson:gson:2.13.1'
     api 'io.opencensus:opencensus-api:0.31.1'
-    implementation 'org.slf4j:slf4j-api:2.0.16'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.11.0'
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
-    testImplementation 'org.slf4j:slf4j-simple:2.0.16'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.17'
     testImplementation 'org.apache.commons:commons-lang3:3.17.0'
     testImplementation 'org.json:json:20240303'
     testImplementation 'io.opencensus:opencensus-impl:0.31.1'
@@ -115,59 +123,109 @@ jacocoTestReport {
 ext.artifactId = 'google-maps-services'
 
 publishing {
+
+    // publications {
+    //     MapsJavaUtils(MavenPublication) {
+    //         pom {
+    //             name = 'Java Client for Google Maps Platform Web Services'
+    //             description = 'Use the Google Maps Platform Web Services in Java! ' +
+    //                     'https://developers.google.com/maps/documentation/webservices/'
+    //             url = 'https://github.com/googlemaps/google-maps-services-java'
+
+    //             scm {
+    //                 url = 'scm:git@github.com:googlemaps/google-maps-services-java.git'
+    //                 connection = 'scm:git@github.com:googlemaps/google-maps-services-java.git'
+    //                 developerConnection = 'scm:git@github.com:googlemaps/google-maps-services-java.git'
+    //             }
+
+    //             licenses {
+    //                 license {
+    //                     name = 'The Apache Software License, Version 2.0'
+    //                     url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    //                     distribution = 'repo'
+    //                 }
+    //             }
+
+    //             organization {
+    //                 name = 'Google Inc'
+    //                 url = 'http://developers.google.com/maps'
+    //             }
+
+    //             developers {
+    //                 developer {
+    //                     id = 'markmcd'
+    //                     name = 'Mark McDonald'
+    //                 }
+    //                 developer {
+    //                     id = 'domesticmouse'
+    //                     name = 'Brett Morgan'
+    //                 }
+    //                 developer {
+    //                     id = 'broady'
+    //                     name = 'Chris Broadfoot'
+    //                 }
+    //                 developer {
+    //                     id = 'chrisarriola'
+    //                     name = 'Christopher Arriola'
+    //                 }
+    //             }
+    //         }
+    //         groupId group
+    //         artifactId project.ext.artifactId
+    //         version version
+    //         from components.java
+    //     }
+    // }
+    // repositories {
+    //     maven {
+    //         url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+    //         credentials {
+    //             username sonatypeUsername
+    //             password sonatypePassword
+    //         }
+    //     }
+    //     maven {
+    //         name = "GitHubPackages"
+    //         url = uri("https://maven.pkg.github.com/googlemaps/google-maps-services-java")
+    //         credentials {
+    //             username = 'googlemaps-bot'
+    //             password = githubPassword
+    //         }
+    //     }
+    // }
+        
     publications {
-        MapsJavaUtils(MavenPublication) {
+        mavenJava(MavenPublication) {
+            groupId = 'devoteam-youmaps'
+            artifactId = project.ext.artifactId
+            version = '2.0.0'
+
+            from components.java
+
             pom {
-                name = 'Java Client for Google Maps Platform Web Services'
-                description = 'Use the Google Maps Platform Web Services in Java! ' +
-                        'https://developers.google.com/maps/documentation/webservices/'
-                url = 'https://github.com/googlemaps/google-maps-services-java'
-
-                scm {
-                    url = 'scm:git@github.com:googlemaps/google-maps-services-java.git'
-                    connection = 'scm:git@github.com:googlemaps/google-maps-services-java.git'
-                    developerConnection = 'scm:git@github.com:googlemaps/google-maps-services-java.git'
-                }
-
-                licenses {
-                    license {
-                        name = 'The Apache Software License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution = 'repo'
-                    }
-                }
+                name = 'FORK - Java Client for Google Maps Platform Web Services for DEVOTEAM usage'
+                description = 'Override the Google Maps 2.0.0 Platform Web Services in Java for DEVOTEAM usage'
 
                 organization {
-                    name = 'Google Inc'
-                    url = 'http://developers.google.com/maps'
+                    name = 'DEVOTEAM'
+                    url = 'https://gcloud.devoteam.com'
                 }
 
                 developers {
                     developer {
-                        id = 'markmcd'
-                        name = 'Mark McDonald'
-                    }
-                    developer {
-                        id = 'domesticmouse'
-                        name = 'Brett Morgan'
-                    }
-                    developer {
-                        id = 'broady'
-                        name = 'Chris Broadfoot'
-                    }
-                    developer {
-                        id = 'chrisarriola'
-                        name = 'Christopher Arriola'
+                        id = 'sylvain.assemat'
+                        name = 'Sylvain ASSEMAT'
                     }
                 }
             }
-            groupId group
-            artifactId project.ext.artifactId
-            version version
-            from components.java
         }
     }
+   	
     repositories {
+    	maven {
+            url "artifactregistry://europe-west2-maven.pkg.dev/youmaps-api/maven-devoteam"
+        }
+    	/*
         maven {
             url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
@@ -182,10 +240,11 @@ publishing {
                 username = 'googlemaps-bot'
                 password = githubPassword
             }
-        }
+        }*/
     }
 }
 
+/*
 nexusPublishing {
     packageGroup = "com.google.maps"
     repositories {
@@ -200,3 +259,4 @@ nexusPublishing {
 signing {
     sign publishing.publications.MapsJavaUtils
 }
+*/

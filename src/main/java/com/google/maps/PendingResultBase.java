@@ -37,7 +37,7 @@ import java.util.Map;
 abstract class PendingResultBase<T, A extends PendingResultBase<T, A, R>, R extends ApiResponse<T>>
     implements PendingResult<T> {
 
-  private final GeoApiContext context;
+  private GeoApiContext context;
   private final ApiConfig config;
   private HashMap<String, List<String>> params = new HashMap<>();
   private Map<String, String> headers = new HashMap<>();
@@ -48,6 +48,18 @@ abstract class PendingResultBase<T, A extends PendingResultBase<T, A, R>, R exte
     this.context = context;
     this.config = config;
     this.responseClass = clazz;
+  }
+
+  public void setContext(GeoApiContext context) {
+    this.context = context;
+  }
+
+  public HashMap<String, List<String>> getParams() {
+    return params;
+  }
+
+  public void setParams(HashMap<String, List<String>> params) {
+    this.params = params;
   }
 
   @Override
